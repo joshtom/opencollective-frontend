@@ -1,5 +1,5 @@
 # source: http://localhost:3060/graphql/v2
-# timestamp: Tue Mar 17 2020 16:30:00 GMT+0100 (GMT+01:00)
+# timestamp: Fri Mar 20 2020 12:11:19 GMT+0100 (GMT+01:00)
 
 """
 Account interface shared by all kind of accounts (Bot, Collective, Event, User, Organization)
@@ -143,6 +143,11 @@ input AccountReferenceInput {
   """
   slug: String
 }
+
+"""
+Values that can be edited in Account's settings
+"""
+scalar AccountSettingsKey
 
 """
 All account types
@@ -371,7 +376,7 @@ type Comment {
   fromAccount: Account
   account: Account
   fromCollective: Account @deprecated(reason: "2020-02-25: Please use fromAccount")
-  collective: Account @deprecated(reason: "2020-02-25: Please use fromAccount")
+  collective: Account @deprecated(reason: "2020-02-25: Please use account")
 }
 
 """
@@ -385,7 +390,6 @@ type CommentCollection implements Collection {
 }
 
 input CommentCreateInput {
-  markdown: String
   html: String
 
   """
@@ -1169,6 +1173,26 @@ type Mutation {
     """
     account: AccountReferenceInput!
   ): Expense
+
+  """
+  Edit the settings for the given account
+  """
+  editAccountSetting(
+    """
+    Account where the settings will be updated
+    """
+    account: AccountReferenceInput!
+
+    """
+    The key that you want to edit in settings
+    """
+    key: AccountSettingsKey!
+
+    """
+    The value to set for this key
+    """
+    value: JSON!
+  ): Account!
 }
 
 """
