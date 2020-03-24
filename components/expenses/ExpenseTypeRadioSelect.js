@@ -5,9 +5,11 @@ import { defineMessages, useIntl } from 'react-intl';
 import styled from 'styled-components';
 
 import expenseTypes from '../../lib/constants/expenseTypes';
-import Container from '../Container';
 import StyledCard from '../StyledCard';
 import { P } from '../Text';
+
+import receiptIllustration from '../../public/static/images/receipt-animation.gif';
+import invoiceIllustration from '../../public/static/images/invoice-animation.gif';
 
 const ExpenseTypeLabels = defineMessages({
   [expenseTypes.INVOICE]: {
@@ -54,12 +56,21 @@ const ExpenseTypeOptionContainer = styled.label`
   margin-left: -1px;
 `;
 
+const TypeIllustration = styled.img.attrs(props => ({
+  alt: '',
+  src: props.expenseType === expenseTypes.RECEIPT ? receiptIllustration : invoiceIllustration,
+}))`
+  width: 64px;
+  height: 64px;
+  margin-right: 16px;
+`;
+
 const ExpenseTypeOption = ({ name, type, defaultChecked }) => {
   const { formatMessage } = useIntl();
   return (
     <ExpenseTypeOptionContainer data-cy={`radio-expense-type-${type}`}>
       <input type="radio" name={name} value={type} defaultChecked={defaultChecked} />
-      <Container background="#F7F8FA" border="1px dashed #C4C7CC" flex="0 0 64px" height={64} borderRadius={8} mx={3} />
+      <TypeIllustration expenseType={type} />
       <Box maxWidth={250}>
         <P fontSize="LeadParagraph" fontWeight="bold" mb={2}>
           {formatMessage(ExpenseTypeLabels[type])}
