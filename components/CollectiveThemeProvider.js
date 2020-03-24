@@ -1,8 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { get, throttle } from 'lodash';
+import { get, throttle, clamp } from 'lodash';
 import memoizeOne from 'memoize-one';
-import { darken, lighten } from 'polished';
+import { setLightness, getLuminance } from 'polished';
 import { ThemeProvider } from 'styled-components';
 import { isHexColor } from 'validator';
 
@@ -33,20 +33,23 @@ export default class CollectiveThemeProvider extends React.PureComponent {
       console.warn(`Invalid custom color: ${primaryColor}`);
       return defaultTheme;
     } else {
+      // Allow a deviation up to 25% of the default luminance
+      const luminance = (getLuminance(primaryColor) - 0.5) / 2 + 0.05;
+      const adjustLuminance = value => setLightness(clamp(value + luminance, 0, 0.97), primaryColor);
       return generateTheme({
         colors: {
           ...defaultTheme.colors,
           primary: {
-            900: darken(0.15, primaryColor),
-            800: darken(0.1, primaryColor),
-            700: darken(0.05, primaryColor),
-            600: darken(0.025, primaryColor),
-            500: primaryColor,
-            400: lighten(0.1, primaryColor),
-            300: lighten(0.15, primaryColor),
-            200: lighten(0.2, primaryColor),
-            100: lighten(0.25, primaryColor),
-            50: lighten(0.3, primaryColor),
+            900: adjustLuminance(0.1),
+            800: adjustLuminance(0.2),
+            700: adjustLuminance(0.3),
+            600: adjustLuminance(0.4),
+            500: adjustLuminance(0.5),
+            400: adjustLuminance(0.6),
+            300: adjustLuminance(0.7),
+            200: adjustLuminance(0.8),
+            100: adjustLuminance(0.9),
+            50: adjustLuminance(1),
           },
         },
       });
